@@ -1,10 +1,33 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { PaymentsModule } from './payments/payments.module';
+import { TenantsModule } from './tenants/tenants.module';
+import { PropertiesModule } from './properties/properties.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite', // This will create a file named 'db.sqlite' in the project root
+      entities: [__dirname + '/**/entities/*.entity{.ts,.js}'], // A glob pattern to load your entities
+      synchronize: true, // Auto-create database schema. Use with caution in production!
+
+    }),
+    AuthModule, 
+    UserModule, 
+    PaymentsModule, 
+    TenantsModule, 
+    PropertiesModule
+  ],
+  controllers: [
+    AppController
+  ],
+  providers: [
+    AppService
+  ],
 })
 export class AppModule {}

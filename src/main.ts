@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('KD-Markets')
     .setDescription('KD-Markets API')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('Kaduna Markets Development and Maintenance Commission')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
