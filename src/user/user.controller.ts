@@ -50,7 +50,7 @@ export class UserController {
    * Accessible by admin and director.
    * @access admin, director
    */
-  @Roles(Role.admin, Role.director)
+  @Roles(Role.admin, Role.managing_director)
   @ApiOkResponse({ description: 'User found' })
   @ApiNoContentResponse({ description: 'No users found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized. JWT is missing or invalid.' })

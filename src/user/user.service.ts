@@ -59,7 +59,7 @@ export class UserService {
     const suspendedUsers = await this.userRepository.countBy({status: Status.suspended})
     const removedUsers = await this.userRepository.countBy({status: Status.removed})
     const adminCount = await this.userRepository.countBy({role: Role.admin})
-    const directorsCount = await this.userRepository.countBy({role: Role.director})
+    const managing_directorsCount = await this.userRepository.countBy({role: Role.managing_director})
     const managersCount = await this.userRepository.countBy({role: Role.manager})
     try {
       return {
@@ -70,7 +70,7 @@ export class UserService {
           suspended: suspendedUsers,
           removed: removedUsers,
           admin: adminCount,
-          directors: directorsCount,
+          managing_directors: managing_directorsCount,
           managers: managersCount
         },
         message: "Status fetched successfully"
@@ -91,13 +91,11 @@ export class UserService {
     const users = await this.userRepository.find({
       relations: [
         'info', 
-        'contact',
-        'station',
+        'contact'
       ],
       select: [
         'email', 
         'contact', 
-        'info', 
         'role',
         'status'
       ]

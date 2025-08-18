@@ -21,7 +21,7 @@ export class TicketController {
    * Accessible by director and manager.
    * @access director, manager
    */
-  @Roles(Role.director, Role.manager)
+  @Roles(Role.managing_director, Role.manager)
   @ApiOperation({summary: "Create ticket"})
   @ApiOkResponse({ description: 'Ticket created successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized. JWT is missing or invalid.' })
@@ -51,7 +51,7 @@ export class TicketController {
    * Accessible by admin, director, and manager.
    * @access admin, director, manager
    */
-  @Roles(Role.admin, Role.director, Role.manager)
+  @Roles(Role.admin, Role.managing_director, Role.manager)
   @ApiOperation({summary: "Add reply to ticket"})
   @ApiOkResponse({ description: 'Reply added successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized. JWT is missing or invalid.' })
@@ -100,7 +100,7 @@ export class TicketController {
   @ApiOkResponse({ description: 'Tickets retrieved successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized. JWT is missing or invalid.' })
   @ApiForbiddenResponse({ description: 'Forbidden. Only director and manager roles allowed.' })
-  @Roles( Role.director, Role.manager)
+  @Roles( Role.managing_director, Role.manager)
   @Get('email/:email')
   findByEmail(@Param('email') email: string) {
     return this.ticketService.findByEmail(email);
@@ -118,7 +118,7 @@ export class TicketController {
   @ApiNotFoundResponse({ description: 'Ticket not found.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized. JWT is missing or invalid.' })
   @ApiForbiddenResponse({ description: 'Forbidden. Only admin, director, and manager roles allowed.' })
-  @Roles(Role.admin, Role.director, Role.manager)
+  @Roles(Role.admin, Role.managing_director, Role.manager)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ticketService.findOne(+id);

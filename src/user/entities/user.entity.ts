@@ -14,7 +14,7 @@ export class User {
     /**
      * Unique identifier for the user (Primary Key)
      */
-    @PrimaryGeneratedColumn({})
+    @PrimaryGeneratedColumn('uuid')
     @IsNumber()
     id:number;
      

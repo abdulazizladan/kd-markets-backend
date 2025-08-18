@@ -65,7 +65,11 @@ export class PropertiesService {
    */
   async findAllMarkets(): Promise<Market[]> {
     return this.marketRepository.find({ 
-      relations: ['address', 'buildings', 'stalls', 'shops'] 
+      relations: [
+        'address', 
+        'buildings', 
+        'stalls'
+      ] 
     });
   }
 
@@ -78,7 +82,11 @@ export class PropertiesService {
   async findOneMarket(id: string): Promise<Market> {
     const market = await this.marketRepository.findOne({
       where: { id },
-      relations: ['address', 'buildings', 'stalls', 'shops'],
+      relations: [
+        'address', 
+        'buildings', 
+        'stalls'
+      ],
     });
     if (!market) {
       throw new NotFoundException(`Market with ID ${id} not found`);

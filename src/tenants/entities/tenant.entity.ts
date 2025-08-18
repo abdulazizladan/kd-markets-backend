@@ -6,9 +6,9 @@ import { RentPayment } from '../../properties/entities/rent-payment.entity';
 /**
  * Defines the Tenant entity. This is necessary to correctly link to Shops and Stalls.
  */
-@Entity()
+@Entity({name: "Tenant"})
 export class Tenant {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -25,7 +25,7 @@ export class Tenant {
   @OneToMany(() => Stall, (stall) => stall.tenant)
   stalls: Stall[];
 
-  // A Tenant can have many unpaid RentPayments
+  // A Tenant can have many unpaid RentPayments 
   @OneToMany(() => RentPayment, (rentPayment) => rentPayment.tenant)
   rentPayments: RentPayment[];
 }

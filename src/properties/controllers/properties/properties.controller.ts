@@ -27,7 +27,7 @@ export class PropertiesController {
 
     // --- Market Endpoints ---
   
-  @ApiTags('Markets')
+  //@ApiTags('Markets')
   @ApiOperation({ summary: 'Create a new market' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The market has been successfully created.', type: Market })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data.' })
@@ -37,7 +37,7 @@ export class PropertiesController {
     return this.propertiesService.createMarket(createMarketDto);
   }
 
-  @ApiTags('Markets')
+  //@ApiTags('Markets')
   @ApiOperation({ summary: 'Retrieve all markets' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved all markets.', type: [Market] })
   @Get('markets')
@@ -45,7 +45,7 @@ export class PropertiesController {
     return this.propertiesService.findAllMarkets();
   }
 
-  @ApiTags('Markets')
+  //@ApiTags('Markets')
   @ApiOperation({ summary: 'Retrieve a single market by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the market', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved the market.', type: Market })
@@ -55,7 +55,7 @@ export class PropertiesController {
     return this.propertiesService.findOneMarket(id);
   }
 
-  @ApiTags('Markets')
+  //@ApiTags('Markets')
   @ApiOperation({ summary: 'Update an existing market' })
   @ApiParam({ name: 'id', description: 'The ID of the market to update', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'The market has been successfully updated.', type: Market })
@@ -66,7 +66,7 @@ export class PropertiesController {
     return this.propertiesService.updateMarket(id, updateMarketDto);
   }
 
-  @ApiTags('Markets')
+  //@ApiTags('Markets')
   @ApiOperation({ summary: 'Delete a market by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the market to delete', type: String })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The market has been successfully deleted.' })
@@ -79,7 +79,7 @@ export class PropertiesController {
 
   // --- Building Endpoints ---
 
-  @ApiTags('Buildings')
+  //@ApiTags('Buildings')
   @ApiOperation({ summary: 'Create a new building' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The building has been successfully created.', type: Building })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data.' })
@@ -90,7 +90,7 @@ export class PropertiesController {
     return this.propertiesService.createBuilding(createBuildingDto);
   }
 
-  @ApiTags('Buildings')
+  //@ApiTags('Buildings')
   @ApiOperation({ summary: 'Retrieve a single building by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the building', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved the building.', type: Building })
@@ -100,7 +100,7 @@ export class PropertiesController {
     return this.propertiesService.findOneBuilding(id);
   }
 
-  @ApiTags('Buildings')
+  //@ApiTags('Buildings')
   @ApiOperation({ summary: 'Update an existing building' })
   @ApiParam({ name: 'id', description: 'The ID of the building to update', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'The building has been successfully updated.', type: Building })
@@ -124,7 +124,7 @@ export class PropertiesController {
     return this.propertiesService.createStall(createStallDto);
   } **/
 
-  @ApiTags('Stalls')
+  //@ApiTags('Stalls')
   @ApiOperation({ summary: 'Retrieve a single stall by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the stall', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved the stall.', type: Stall })
@@ -134,7 +134,7 @@ export class PropertiesController {
     return this.propertiesService.findOneStall(id);
   }
 
-  @ApiTags('Stalls')
+  //@ApiTags('Stalls')
   @ApiOperation({ summary: 'Update an existing stall' })
   @ApiParam({ name: 'id', description: 'The ID of the stall to update', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'The stall has been successfully updated.', type: Stall })
@@ -147,7 +147,7 @@ export class PropertiesController {
 
   // --- Shop Endpoints ---
   
-  @ApiTags('Shops')
+  //@ApiTags('Shops')
   @ApiOperation({ summary: 'Create a new shop' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The shop has been successfully created.', type: Shop })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data.' })
@@ -158,7 +158,7 @@ export class PropertiesController {
     return this.propertiesService.createShop(createShopDto);
   }
 
-  @ApiTags('Shops')
+  //@ApiTags('Shops')
   @ApiOperation({ summary: 'Retrieve a single shop by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the shop', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved the shop.', type: Shop })
@@ -168,7 +168,7 @@ export class PropertiesController {
     return this.propertiesService.findOneShop(id);
   }
 
-  @ApiTags('Shops')
+  //@ApiTags('Shops')
   @ApiOperation({ summary: 'Update an existing shop' })
   @ApiParam({ name: 'id', description: 'The ID of the shop to update', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'The shop has been successfully updated.', type: Shop })
@@ -181,7 +181,7 @@ export class PropertiesController {
 
   // --- Rent Payment Endpoints ---
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ summary: 'Create a new rent payment' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'The rent payment has been successfully created.', type: RentPayment })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data.' })
@@ -192,7 +192,7 @@ export class PropertiesController {
     return this.propertiesService.createRentPayment(createRentPaymentDto);
   }
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ summary: 'Retrieve a single rent payment by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the rent payment', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successfully retrieved the rent payment.', type: RentPayment })
@@ -202,7 +202,7 @@ export class PropertiesController {
     return this.propertiesService.findOneRentPayment(id);
   }
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ summary: 'Update an existing rent payment' })
   @ApiParam({ name: 'id', description: 'The ID of the rent payment to update', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: 'The rent payment has been successfully updated.', type: RentPayment })
