@@ -12,7 +12,7 @@ export class Contact {
      */
     @Column({ primary: true, generated: true })
     @IsNumber()
-    id: number;
+    id: string;
 
     /**
      * Phone number of the user

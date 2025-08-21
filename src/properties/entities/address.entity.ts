@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity({name: 'Address'})
+@Entity({name: 'MarketAddress'})
 export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column()
+  @Column({})
   streetAddress: string;
 
-  @Column()
+  @Column({})
   town: string;
 
-  @Column()
+  @Column({})
   lga: string;
 
   @Column({ default: 'Kaduna' })

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { Market } from './market.entity';
 import { Shop } from './shop.entity';
 import { BuildingStatus } from '../enums/property-status.enum';
+import { Maintence } from 'src/maintenance/entities/maintenance.entity';
 
 /**
  * Defines the Building entity, which is part of a Market.
@@ -11,13 +12,13 @@ export class Building {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({})
   name: string;
 
-  @Column()
+  @Column({})
   description: string;
 
-  @Column()
+  @Column({})
   summary: string;
 
   @Column({
@@ -32,4 +33,7 @@ export class Building {
   // A Building can have many Shops
   @OneToMany(() => Shop, (shop) => shop.building)
   shops: Shop[];
+
+  //@ManyToOne((type) => Maintence, maintenance => maintenance.buildings)
+  //maintenance: Maintence;
 }

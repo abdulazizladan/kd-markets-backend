@@ -3,6 +3,7 @@ import { Building } from './building.entity';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { RentPayment } from './rent-payment.entity';
 import { ShopStatus } from '../enums/property-status.enum';
+import { Maintence } from 'src/maintenance/entities/maintenance.entity';
 
 /**
  * Defines the Shop entity, which is located inside a Building.
@@ -34,6 +35,9 @@ export class Shop {
   building: Building;
 
   // A Shop can have many unpaid RentPayments
-  @OneToMany(() => RentPayment, (rentPayment) => rentPayment.shop)
+  @OneToMany((type) => RentPayment, (rentPayment) => rentPayment.shop)
   rentPayments: RentPayment[];
+
+  //@ManyToOne((type) => Maintence, maintenance => maintenance.shops)
+  //maintenance: Maintence;
 }

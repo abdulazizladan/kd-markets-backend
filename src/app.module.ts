@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { PaymentsModule } from './payments/payments.module';
 import { TenantsModule } from './tenants/tenants.module';
 import { PropertiesModule } from './properties/properties.module';
+import { MaintenanceModule } from './maintenance/maintenance.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { PropertiesModule } from './properties/properties.module';
     UserModule, 
     PaymentsModule, 
     TenantsModule, 
-    PropertiesModule
+    PropertiesModule, MaintenanceModule
   ],
   controllers: [
     AppController

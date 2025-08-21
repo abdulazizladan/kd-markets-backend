@@ -16,7 +16,7 @@ export class User {
      */
     @PrimaryGeneratedColumn('uuid')
     @IsNumber()
-    id:number;
+    id: string;
      
     /**
      * Unique email address of the user

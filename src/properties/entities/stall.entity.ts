@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Market } from './market.entity';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
+import { Maintence } from 'src/maintenance/entities/maintenance.entity';
 
 /**
  * Defines the Stall entity, which is part of a Market but not a Building.
@@ -30,4 +31,7 @@ export class Stall {
   // A Stall belongs to one Market
   @ManyToOne(() => Market, (market) => market.stalls)
   market: Market;
+
+  //@ManyToOne((type) => Maintence, maintenance => maintenance.stall)
+  //maintenance: Maintence;
 }

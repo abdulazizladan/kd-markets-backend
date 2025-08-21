@@ -1,7 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne } from "typeorm";
 import { Building } from "./building.entity";
 import { Stall } from "./stall.entity";
 import { Address } from "./address.entity";
+import { Maintence } from "src/maintenance/entities/maintenance.entity";
 
 @Entity({name: 'Market'})
 export class Market {
@@ -20,4 +21,7 @@ export class Market {
 
     @OneToMany((type) => Stall, stalls => stalls.market)
     stalls: Stall[];
+
+    //@ManyToOne((type) => Maintence, maintenance => maintenance.markets)
+    //maintenance: Maintence;
 }

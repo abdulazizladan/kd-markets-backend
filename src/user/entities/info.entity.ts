@@ -9,7 +9,7 @@ export class Info {
      */
     @Column({ primary: true, generated: true })
     @IsNumber()
-    id: number;
+    id: string;
     
     /**
      * First name of the user

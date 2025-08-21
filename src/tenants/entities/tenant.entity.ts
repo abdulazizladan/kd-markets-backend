@@ -12,7 +12,16 @@ export class Tenant {
   id: string;
 
   @Column()
-  name: string;
+  firstName: string;
+
+  @Column({nullable: true})
+  middleName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column({nullable: true})
+  contactEmail: string;
 
   @Column({ unique: true })
   contactNumber: string;
