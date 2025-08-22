@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { IsString, IsOptional, IsNumber } from "class-validator";
 
@@ -7,7 +7,7 @@ export class Info {
     /**
      * Unique identifier for the info record (Primary Key)
      */
-    @Column({ primary: true, generated: true })
+    @PrimaryGeneratedColumn('uuid')
     @IsNumber()
     id: string;
     
