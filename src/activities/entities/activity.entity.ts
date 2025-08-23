@@ -36,6 +36,6 @@ export class Activity {
     @Column({type: 'text', enum: ActivityStatus})
     "status": ActivityStatus = ActivityStatus.Planned; // Default status is 'Planned'
 
-    @Column({type: 'date', nullable: false})
+    @Column({type: 'date', nullable: true})
     "lastCompleted": Date;
 }

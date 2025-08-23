@@ -23,7 +23,6 @@ export class CreateActivityDto {
     description: 'The date and time when the activity is scheduled to occur',
   })
   @IsDate()
-  @IsNotEmpty()
   scheduledTime: Date;
 
   @ApiProperty({
@@ -49,6 +48,5 @@ export class CreateActivityDto {
     description: 'Date when this activity was last completed (required by database)'
   })
   @IsDate()
-  @IsNotEmpty()
   lastCompleted: Date;
 }
