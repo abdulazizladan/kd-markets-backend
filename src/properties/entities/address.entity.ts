@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Market } from './market.entity';
 
 @Entity({name: 'MarketAddress'})
 export class Address {
@@ -16,4 +17,7 @@ export class Address {
 
   @Column({ default: 'Kaduna' })
   state: string;
+
+  @OneToOne((type) => Market, market => market.address)
+  markey: Market;
 }
