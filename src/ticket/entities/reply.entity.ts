@@ -16,6 +16,7 @@ export class Reply {
 
   sender: User;
 
-  @CreateDateColumn()
+  @CreateDateColumn({default: Date.now()})
   date: Date;
+  
 }

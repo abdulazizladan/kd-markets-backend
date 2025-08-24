@@ -102,10 +102,10 @@ export class ActivitiesController {
         value: {
           name: 'Monthly Market Inspection',
           description: 'Conduct thorough inspection of all market stalls and facilities',
-          scheduledTime: '2024-01-15T09:00:00.000Z',
+          scheduledTime: 213454123353,
           frequency: ActivityFrequency.Monthly,
           status: ActivityStatus.Planned,
-          lastCompleted: '2023-12-15T09:00:00.000Z'
+          lastCompleted: 123235212
         }
       },
       example2: {
@@ -113,9 +113,9 @@ export class ActivitiesController {
         value: {
           name: 'Weekly Cleaning',
           description: 'General cleaning of market areas',
-          scheduledTime: '2024-01-08T08:00:00.000Z',
+          scheduledTime: 21452124345,
           frequency: ActivityFrequency.Weekly,
-          lastCompleted: '2024-01-01T08:00:00.000Z'
+          lastCompleted: 21342451123
         }
       }
     }
@@ -140,9 +140,21 @@ export class ActivitiesController {
     summary: 'Get all activities',
     description: 'Retrieves all activities ordered by scheduled time in ascending order.'
   })
-  @ApiOkResponse({
-    description: 'List of all activities retrieved successfully',
-    type: [Activity]
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns a list of activities',
+    schema: {
+      example: [{
+        id: '',
+        name: '',
+        description: '',
+        scheduledTime: '',
+        frequency: '',
+        status: '',
+        lastCompleted: '',
+        createdAt: ''
+      }]
+    }
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error - Failed to fetch activities'
@@ -156,9 +168,21 @@ export class ActivitiesController {
     summary: 'Get overdue activities',
     description: 'Retrieves all activities that are past their scheduled time and not completed.'
   })
-  @ApiOkResponse({
-    description: 'List of overdue activities retrieved successfully',
-    type: [Activity]
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns a list of overdue activities',
+    schema: {
+      example: [{
+        id: '',
+        name: '',
+        description: '',
+        scheduledTime: '',
+        frequency: '',
+        status: 'overdue',
+        lastCompleted: '',
+        createdAt: ''
+      }]
+    }
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error - Failed to fetch overdue activities'
@@ -227,9 +251,21 @@ export class ActivitiesController {
     description: 'Unique identifier of the activity',
     example: '123e4567-e89b-12d3-a456-426614174000'
   })
-  @ApiOkResponse({
-    description: 'Activity retrieved successfully',
-    type: Activity
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns activity by ID',
+    schema: {
+      example: {
+        id: '',
+        name: '',
+        description: '',
+        scheduledTime: '',
+        frequency: '',
+        status: '',
+        lastCompleted: '',
+        createdAt: ''
+      }
+    }
   })
   @ApiNotFoundResponse({
     description: 'Activity not found with the specified ID'

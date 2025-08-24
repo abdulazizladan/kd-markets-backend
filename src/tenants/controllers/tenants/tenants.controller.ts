@@ -80,14 +80,28 @@ export class TenantsController {
         return this.tenantsService.createTenant(tenant);
     }
 
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'All tenants retrieved successfully',
+        type: [Tenant],
+        schema: {
+            example: {
+                id: '',
+                firstName: '',
+                middleName: '',
+                lastName: '',
+                contactEmail: '',
+                contactNumber: '',
+                shops: [],
+                stalls: [],
+                rentPayment: []
+            }
+        }
+    })
     @Get()
     @ApiOperation({
         summary: 'Get all tenants',
         description: 'Retrieves all tenants in the system with their associated market and property information.'
-    })
-    @ApiOkResponse({
-        description: 'All tenants retrieved successfully',
-        type: [Tenant]
     })
     @ApiInternalServerErrorResponse({
         description: 'Internal server error - Failed to fetch tenants'

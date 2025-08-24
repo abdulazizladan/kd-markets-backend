@@ -14,7 +14,7 @@ export class Ticket {
   @Column({ nullable: true })
   description?: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({default: Date.now()})
   dateCreated: Date;
 
   @Column({ default: Status.active })
@@ -26,4 +26,5 @@ export class Ticket {
   @ManyToOne((type) => User, user => user.tickets, {nullable: true})
   @JoinColumn({name: "user_id", referencedColumnName: "id"})
   sender: User;
+
 }

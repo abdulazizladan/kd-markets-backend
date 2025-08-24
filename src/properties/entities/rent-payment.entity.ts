@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Shop } from './shop.entity';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 
@@ -24,4 +24,7 @@ export class RentPayment {
   // A RentPayment belongs to one Tenant
   @ManyToOne(() => Tenant, (tenant) => tenant.rentPayments)
   tenant: Tenant;
+
+  @CreateDateColumn({default: Date.now()})
+  createdAt: Date;
 }

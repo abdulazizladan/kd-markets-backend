@@ -57,7 +57,6 @@ export class ActivitiesService {
       // Set default values for required fields if not provided
       const activityData = {
         ...createActivityDto,
-        lastCompleted: createActivityDto.lastCompleted || new Date(), // Default to current date if not provided
         status: createActivityDto.status || ActivityStatus.Planned // Default status
       };
       

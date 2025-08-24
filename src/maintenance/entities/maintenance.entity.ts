@@ -2,7 +2,7 @@ import { Building } from "src/properties/entities/building.entity";
 import { Market } from "src/properties/entities/market.entity";
 import { Shop } from "src/properties/entities/shop.entity";
 import { Stall } from "src/properties/entities/stall.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'Maintenance'})
 export class Maintence {
@@ -42,4 +42,7 @@ export class Maintence {
 
     //@OneToMany((type) => Stall, stall => stall.maintenance)
     //stall: Stall[];
+
+    @CreateDateColumn({default: Date.now()})
+    createdAt: Date;
 }

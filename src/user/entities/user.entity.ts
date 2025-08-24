@@ -100,6 +100,7 @@ export class User {
     static async hashPassword(password: string): Promise<string> {
         return bcrypt.hash(password, 10); // 10 salt rounds 
     }
+    
 }
 
 

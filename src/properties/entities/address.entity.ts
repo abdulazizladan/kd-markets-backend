@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, CreateDateColumn } from 'typeorm';
 import { Market } from './market.entity';
 
 @Entity({name: 'MarketAddress'})
@@ -20,4 +20,7 @@ export class Address {
 
   @OneToOne((type) => Market, market => market.address)
   markey: Market;
+
+  @CreateDateColumn({default: Date.now()})
+  createdAt: Date;
 }

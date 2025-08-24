@@ -10,10 +10,28 @@ export class MaintenanceController {
     ) {}
 
     @ApiOperation({summary: 'Get all maintenance records'})
-    @ApiResponse({ status: HttpStatus.CREATED, description: 'The maintenance has been successfully created.', type: Maintence })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data.' })
+    @ApiResponse(
+        { status: HttpStatus.CREATED,
+             description: 'The maintenance has been successfully created.', 
+             type: Maintence,
+            schema: {
+                example: [{
+                    id: '',
+                    dateOfMaintenance: '',
+                    description: '',
+                    cost: 0,
+                    recordType: '',
+                    status: '',
+                    paymentStatus: '',
+                    createdAt: ''
+                }]
+            }
+        }
+    )
+    @ApiResponse({ status: HttpStatus.OK, description: 'Invalid input data.' })
     @Get()
     getAll() {
         return this.maintenanceService.findAllMaintenance()
     }
 }
+

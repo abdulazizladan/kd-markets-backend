@@ -12,13 +12,23 @@ export class PaymentsController {
     }
 
     @Get('verify/:reference')
-    @ApiOperation({summary: 'Verify payment', description: 'Verify and complete an initialized payment'})
+    @ApiOperation(
+        {
+            summary: 'Verify payment', 
+            description: 'Verify and complete an initialized payment'
+        }
+    )
     verify(reference: string) {
 
     }
 
     @Post('webhook')
-    @ApiOperation({summary: '', description: ''})
+    @ApiOperation(
+        {
+            summary: '', 
+            description: ''
+        }
+    )
     webhook() {
 
     }

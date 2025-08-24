@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn } from 'typeorm';
 import { Shop } from '../../properties/entities/shop.entity';
 import { Stall } from '../../properties/entities/stall.entity';
 import { RentPayment } from '../../properties/entities/rent-payment.entity';
@@ -37,4 +37,7 @@ export class Tenant {
   // A Tenant can have many unpaid RentPayments 
   @OneToMany(() => RentPayment, (rentPayment) => rentPayment.tenant)
   rentPayments: RentPayment[];
+
+  @CreateDateColumn({default: Date.now()})
+  createdAt: Date;
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum ActivityStatus {
     Planned = 'Planned',
@@ -27,7 +27,7 @@ export class Activity {
     @Column({ type: 'varchar' })
     "description": string;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'date', nullable: true })
     "scheduledTime": Date;
 
     @Column({type: 'text', enum: ActivityFrequency})
@@ -38,4 +38,7 @@ export class Activity {
 
     @Column({type: 'date', nullable: true})
     "lastCompleted": Date;
+
+    @CreateDateColumn({default: Date.now()})
+    createdAt: Date;
 }

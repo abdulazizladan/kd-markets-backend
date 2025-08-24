@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne, CreateDateColumn } from "typeorm";
 import { Building } from "./building.entity";
 import { Stall } from "./stall.entity";
 import { Address } from "./address.entity";
@@ -24,4 +24,7 @@ export class Market {
 
     //@ManyToOne((type) => Maintence, maintenance => maintenance.markets)
     //maintenance: Maintence;
+
+    @CreateDateColumn({default: Date.now()})
+    createdAt: Date;
 }
