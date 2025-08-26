@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEnum, IsOptional, IsString, IsObject, ValidateNested, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsOptional, IsString, IsObject, ValidateNested, IsNumber, IsArray } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { BuildingStatus, ShopStatus } from '../enums/property-status.enum';
@@ -53,10 +53,25 @@ export class CreateMarketDto {
     description: "Address of the market",
     type: CreateAddressDto
   })
+ 
   @IsObject()
   @ValidateNested()
   @Type(() => CreateAddressDto)
   address: CreateAddressDto;
+
+  @ApiProperty({nullable: true, description: 'Buildings details', isArray: true})
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateBuildingDto)
+  buildings: CreateBuildingDto[]
+
+  @ApiProperty({nullable: true, description: 'Stalls details', isArray: true})
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateStallDto)
+  stalls: CreateStallDto[];
 }
 
 export class UpdateMarketDto extends PartialType(CreateMarketDto) {}

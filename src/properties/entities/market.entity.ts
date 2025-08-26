@@ -16,10 +16,10 @@ export class Market {
     @JoinColumn() // This decorator makes Market the owning side of the relationship
     address: Address;
 
-    @OneToMany((type) => Building, building => building.market)
+    @OneToMany((type) => Building, building => building.market, {nullable: true})
     buildings: Building[];
 
-    @OneToMany((type) => Stall, stalls => stalls.market)
+    @OneToMany((type) => Stall, stalls => stalls.market, {nullable: true})
     stalls: Stall[];
 
     //@ManyToOne((type) => Maintence, maintenance => maintenance.markets)

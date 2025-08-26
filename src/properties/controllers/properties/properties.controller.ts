@@ -53,10 +53,27 @@ export class PropertiesController {
         summary: 'Central Market',
         value: {
           name: 'Central Market',
-          description: 'Main market in the city center',
-          location: 'City Center, Kaduna',
-          capacity: 500,
-          status: 'Active'
+          address: {
+            streetAddress: 'Ahmadu Bello Way by Emir Rd',
+            town: 'Kaduna',
+            lga: 'Kaduna North',
+            state: 'Kaduna'
+          },
+          buildings: [
+            {
+              name: 'Block A',
+              description: 'Main wing',
+              summary: '3 floors with mixed-use',
+              marketId: 'market-uuid-placeholder'
+            }
+          ],
+          stalls: [
+            {
+              name: 'Stall 1',
+              annualRentRate: 25000,
+              marketId: 'market-uuid-placeholder'
+            }
+          ]
         }
       }
     }
