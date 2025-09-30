@@ -27,4 +27,7 @@ export class Market {
 
     @CreateDateColumn({default: Date.now()})
     createdAt: Date;
+    
+    @Column({default: 'active'})
+    status: string;
 }

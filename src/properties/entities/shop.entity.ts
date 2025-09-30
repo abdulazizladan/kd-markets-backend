@@ -31,7 +31,7 @@ export class Shop {
   tenant: Tenant;
 
   // A Shop belongs to one Building
-  @ManyToOne(() => Building, (building) => building.shops)
+  @ManyToOne(() => Building, (building) => building.shops, { onDelete: 'CASCADE' })
   building: Building;
 
   // A Shop can have many unpaid RentPayments

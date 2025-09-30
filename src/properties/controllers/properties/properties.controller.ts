@@ -40,7 +40,7 @@ export class PropertiesController {
 
     // --- Market Endpoints ---
   
-  @ApiTags('Markets')
+  @ApiTags('Properties', 'Markets')
   @ApiOperation({ 
     summary: 'Create a new market',
     description: 'Creates a new market with the provided details including name, location, description, and capacity information.'
@@ -94,14 +94,14 @@ export class PropertiesController {
     return this.propertiesService.createMarket(createMarketDto);
   }
 
-  @ApiTags('Markets')
+  @ApiTags('Properties', 'Markets')
   @ApiOperation({ 
     summary: 'Get all markets',
     description: 'Retrieves all markets in the system with their associated properties and tenant information.'
   })
   @ApiOkResponse({
     description: 'All markets retrieved successfully',
-    type: [Market]
+    type: [CreateMarketDto]
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal server error - Failed to fetch markets'
@@ -111,7 +111,7 @@ export class PropertiesController {
     return this.propertiesService.findAllMarkets();
   }
 
-  @ApiTags('Markets')
+  @ApiTags('Properties', 'Markets')
   @ApiOperation({ 
     summary: 'Get market by ID',
     description: 'Retrieves a specific market by its unique identifier.'
@@ -123,7 +123,7 @@ export class PropertiesController {
   })
   @ApiOkResponse({
     description: 'Market retrieved successfully',
-    type: Market
+    type: CreateMarketDto
   })
   @ApiNotFoundResponse({
     description: 'Market not found with the specified ID'
@@ -139,7 +139,7 @@ export class PropertiesController {
     return this.propertiesService.findOneMarket(id);
   }
 
-  @ApiTags('Markets')
+  @ApiTags('Properties', 'Markets')
   @ApiOperation({ 
     summary: 'Update market',
     description: 'Updates an existing market with the provided data. Only the fields that need to be updated should be included.'
@@ -186,7 +186,7 @@ export class PropertiesController {
     return this.propertiesService.updateMarket(id, updateMarketDto);
   }
 
-  @ApiTags('Markets')
+  @ApiTags('Properties', 'Markets')
   @ApiOperation({ 
     summary: 'Delete market',
     description: 'Permanently removes a market from the system. This will also remove all associated buildings, stalls, and shops.'
@@ -216,7 +216,7 @@ export class PropertiesController {
 
   // --- Building Endpoints ---
 
-  @ApiTags('Buildings')
+  @ApiTags('Properties', 'Buildings')
   @ApiOperation({ 
     summary: 'Create a new building',
     description: 'Creates a new building within a market with the provided details including floor count, building type, and market assignment.'
@@ -267,7 +267,7 @@ export class PropertiesController {
     return this.propertiesService.createBuilding(createBuildingDto);
   }
 
-  @ApiTags('Buildings')
+  @ApiTags('Properties', 'Buildings')
   @ApiOperation({ 
     summary: 'Get building by ID',
     description: 'Retrieves a specific building by its unique identifier.'
@@ -295,7 +295,7 @@ export class PropertiesController {
     return this.propertiesService.findOneBuilding(id);
   }
 
-  @ApiTags('Buildings')
+  @ApiTags('Properties', 'Buildings')
   @ApiOperation({ 
     summary: 'Update building',
     description: 'Updates an existing building with the provided data. Only the fields that need to be updated should be included.'
@@ -344,7 +344,7 @@ export class PropertiesController {
 
   // --- Stall Endpoints ---
   
-  @ApiTags('Stalls')
+  @ApiTags('Properties', 'Stalls')
   @ApiOperation({ 
     summary: 'Get stall by ID',
     description: 'Retrieves a specific stall by its unique identifier.'
@@ -372,7 +372,7 @@ export class PropertiesController {
     return this.propertiesService.findOneStall(id);
   }
 
-  @ApiTags('Stalls')
+  @ApiTags('Properties', 'Stalls')
   @ApiOperation({ 
     summary: 'Update stall',
     description: 'Updates an existing stall with the provided data. Only the fields that need to be updated should be included.'
@@ -421,7 +421,7 @@ export class PropertiesController {
 
   // --- Shop Endpoints ---
   
-  @ApiTags('Shops')
+  @ApiTags('Properties', 'Shops')
   @ApiOperation({ 
     summary: 'Create a new shop',
     description: 'Creates a new shop within a building with the provided details including shop type, size, and building assignment.'
@@ -472,7 +472,7 @@ export class PropertiesController {
     return this.propertiesService.createShop(createShopDto);
   }
 
-  @ApiTags('Shops')
+  @ApiTags('Properties', 'Shops')
   @ApiOperation({ 
     summary: 'Get shop by ID',
     description: 'Retrieves a specific shop by its unique identifier.'
@@ -500,7 +500,7 @@ export class PropertiesController {
     return this.propertiesService.findOneShop(id);
   }
 
-  @ApiTags('Shops')
+  @ApiTags('Properties', 'Shops')
   @ApiOperation({ 
     summary: 'Update shop',
     description: 'Updates an existing shop with the provided data. Only the fields that need to be updated should be included.'
@@ -549,7 +549,7 @@ export class PropertiesController {
 
   // --- Rent Payment Endpoints ---
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ 
     summary: 'Create a new rent payment',
     description: 'Creates a new rent payment record for a property with the provided details including amount, due date, and payment method.'
@@ -601,7 +601,7 @@ export class PropertiesController {
     return this.propertiesService.createRentPayment(createRentPaymentDto);
   }
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ 
     summary: 'Get rent payment by ID',
     description: 'Retrieves a specific rent payment by its unique identifier.'
@@ -629,7 +629,7 @@ export class PropertiesController {
     return this.propertiesService.findOneRentPayment(id);
   }
 
-  @ApiTags('Rent Payments')
+  //@ApiTags('Rent Payments')
   @ApiOperation({ 
     summary: 'Update rent payment',
     description: 'Updates an existing rent payment with the provided data. Only the fields that need to be updated should be included.'

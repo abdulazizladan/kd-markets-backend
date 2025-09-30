@@ -27,7 +27,7 @@ export class Building {
   status: string;
 
   // Many Buildings can belong to one Market
-  @ManyToOne(() => Market, (market) => market.buildings)
+  @ManyToOne(() => Market, (market) => market.buildings, { onDelete: 'CASCADE' })
   market: Market;
 
   // A Building can have many Shops

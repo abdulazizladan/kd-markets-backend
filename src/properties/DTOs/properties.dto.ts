@@ -72,6 +72,11 @@ export class CreateMarketDto {
   @ValidateNested({ each: true })
   @Type(() => CreateStallDto)
   stalls: CreateStallDto[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  status: string;
 }
 
 export class UpdateMarketDto extends PartialType(CreateMarketDto) {}

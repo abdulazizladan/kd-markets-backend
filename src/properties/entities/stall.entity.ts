@@ -29,7 +29,7 @@ export class Stall {
   tenant: Tenant;
 
   // A Stall belongs to one Market
-  @ManyToOne(() => Market, (market) => market.stalls)
+  @ManyToOne(() => Market, (market) => market.stalls, { onDelete: 'CASCADE' })
   market: Market;
 
   //@ManyToOne((type) => Maintence, maintenance => maintenance.stall)

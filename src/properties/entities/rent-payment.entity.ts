@@ -18,7 +18,7 @@ export class RentPayment {
   year: number;
 
   // A RentPayment belongs to one Shop
-  @ManyToOne(() => Shop, (shop) => shop.rentPayments)
+  @ManyToOne(() => Shop, (shop) => shop.rentPayments, { onDelete: 'CASCADE' })
   shop: Shop;
 
   // A RentPayment belongs to one Tenant
