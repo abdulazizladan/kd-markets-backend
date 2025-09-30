@@ -179,14 +179,13 @@ export class UpdateStallDto extends PartialType(CreateStallDto) {
 export class CreateShopDto {
 
   @ApiProperty({
-    
+  
   })
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @ApiProperty({})
-  @IsNotEmpty()
+  @ApiProperty({nullable: true})
   @IsString()
   annualRentRate: number;
 
@@ -195,7 +194,7 @@ export class CreateShopDto {
   @IsString()
   buildingId: string; // To link to the parent Building
 
-  @ApiProperty({})
+  @ApiProperty({nullable: true})
   @IsString()
   tenantId?: string; // Optional, as a shop can be vacant
 }

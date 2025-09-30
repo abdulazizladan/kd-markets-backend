@@ -30,6 +30,9 @@ export class Shop {
   })
   tenant: Tenant;
 
+  @Column({})
+  size: string;
+
   // A Shop belongs to one Building
   @ManyToOne(() => Building, (building) => building.shops, { onDelete: 'CASCADE' })
   building: Building;
