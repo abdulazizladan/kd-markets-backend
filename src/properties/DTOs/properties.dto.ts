@@ -79,7 +79,13 @@ export class CreateMarketDto {
   status: string;
 }
 
-export class UpdateMarketDto extends PartialType(CreateMarketDto) {}
+export class UpdateMarketDto extends PartialType(CreateMarketDto) {
+
+  @ApiProperty({ required: false, description: 'Status of the market' })
+  @IsOptional()
+  @IsString()
+  status?: string;
+}
 
 export class CreateBuildingDto {
 

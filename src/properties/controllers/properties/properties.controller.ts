@@ -226,24 +226,12 @@ export class PropertiesController {
     description: 'Building creation data',
     examples: {
       example1: {
-        summary: 'Multi-story Building',
+        summary: 'Building',
         value: {
-          name: 'Building A',
-          description: 'Main multi-story building',
-          floorCount: 3,
-          buildingType: 'Commercial',
-          marketId: 'market-uuid-123',
-          status: 'Active'
-        }
-      },
-      example2: {
-        summary: 'Single Story Building',
-        value: {
-          name: 'Building B',
-          description: 'Single story retail building',
-          floorCount: 1,
-          buildingType: 'Retail',
-          marketId: 'market-uuid-123'
+          "name": "Building A",
+          "description": "Main multi-story building",
+          "marketId": "974aab6c-044b-412c-93a8-d716a99dfd2e",
+          "summary": "Main building complex"
         }
       }
     }
