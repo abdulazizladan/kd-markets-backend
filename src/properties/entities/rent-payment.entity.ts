@@ -1,29 +1,46 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Market } from './market.entity';
 import { Shop } from './shop.entity';
+import { Stall } from './stall.entity';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 
 /**
- * Defines a single unpaid payment for a shop.
- * This entity tracks individual debts, which can then be summed.
+ * A rent payment received for a shop or a stall.
+ * A market's revenue is the sum of these.
  */
 @Entity({name: 'RentPayment'})
 export class RentPayment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  // Amount received, in Naira
+  @Column('decimal', { precision: 12, scale: 2 })
   amount: number;
 
+  // The day the money was received
+  @Column({ type: 'date', nullable: true })
+  paymentDate: Date;
+
+  // The rent year the payment is for. Defaults to the year of the payment date.
   @Column()
   year: number;
 
-  // A RentPayment belongs to one Shop
-  @ManyToOne(() => Shop, (shop) => shop.rentPayments, { onDelete: 'CASCADE' })
-  shop: Shop;
+  // The market the paid-for unit is in. Stored directly so revenue can be
+  // listed per market whether the unit is a shop or a stall.
+  @ManyToOne(() => Market, { nullable: true, onDelete: 'CASCADE' })
+  market: Market;
 
-  // A RentPayment belongs to one Tenant
-  @ManyToOne(() => Tenant, (tenant) => tenant.rentPayments)
-  tenant: Tenant;
+  // A payment is for either a Shop...
+  @ManyToOne(() => Shop, (shop) => shop.rentPayments, { nullable: true, onDelete: 'CASCADE' })
+  shop: Shop | null;
+
+  // ...or a Stall
+  @ManyToOne(() => Stall, { nullable: true, onDelete: 'CASCADE' })
+  stall: Stall | null;
+
+  // The tenant who paid
+  @ManyToOne(() => Tenant, (tenant) => tenant.rentPayments, { nullable: true })
+  tenant: Tenant | null;
 
   @CreateDateColumn({default: Date.now()})
   createdAt: Date;

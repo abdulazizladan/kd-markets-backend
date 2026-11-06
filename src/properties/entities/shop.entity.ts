@@ -28,10 +28,24 @@ export class Shop {
   @ManyToOne(() => Tenant, (tenant) => tenant.shops, {
     nullable: true, // A shop can be vacant (have no tenant)
   })
-  tenant: Tenant;
+  tenant: Tenant | null;
 
-  @Column({})
-  size: string;
+  @Column({ type: 'varchar', nullable: true })
+  size: string | null;
+
+  // --- Current tenancy. These are only set while a tenant occupies the shop. ---
+
+  // The day the current tenant moved in
+  @Column({ type: 'date', nullable: true })
+  occupancyStartDate: Date | null;
+
+  // The day the current tenancy ends
+  @Column({ type: 'date', nullable: true })
+  tenancyExpiryDate: Date | null;
+
+  // Whether the rent for the current tenancy has been paid: see PaymentStatus
+  @Column({ type: 'varchar', nullable: true })
+  paymentStatus: string | null;
 
   // A Shop belongs to one Building
   @ManyToOne(() => Building, (building) => building.shops, { onDelete: 'CASCADE' })

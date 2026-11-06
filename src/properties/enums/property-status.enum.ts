@@ -9,3 +9,10 @@ export enum BuildingStatus {
     OCCUPIED = 'occupied',
     VACANT = 'vacant',
   }
+
+  /** Whether the rent for a shop's current tenancy has been paid. */
+  export enum PaymentStatus {
+    PAID = 'paid',
+    PENDING = 'pending',
+    OVERDUE = 'overdue',
+  }

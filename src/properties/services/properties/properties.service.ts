@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Market } from '../../entities/market.entity';
@@ -8,6 +8,7 @@ import { Shop } from '../../entities/shop.entity';
 import { RentPayment } from '../../entities/rent-payment.entity';
 import { Address } from '../../entities/address.entity';
 import { Tenant } from '../../../tenants/entities/tenant.entity';
+import { ShopStatus } from '../../enums/property-status.enum';
 
 import {
   CreateMarketDto,
@@ -68,7 +69,8 @@ export class PropertiesService {
       relations: [
         'address', 
         'buildings', 
-        'stalls'
+        'stalls',
+        'stalls.tenant' // so a market page can show who occupies each stall
       ] 
     });
   }
@@ -85,7 +87,8 @@ export class PropertiesService {
       relations: [
         'address', 
         'buildings', 
-        'stalls'
+        'stalls',
+        'stalls.tenant' // so a market page can show who occupies each stall
       ],
     });
     if (!market) {
@@ -166,7 +169,8 @@ export class PropertiesService {
   async findOneBuilding(id: string): Promise<Building> {
     const building = await this.buildingRepository.findOne({ 
       where: { id }, 
-      relations: ['market', 'shops'] 
+      // Each shop comes with its tenant so a building page can show who occupies it
+      relations: ['market', 'shops', 'shops.tenant'] 
     });
     if (!building) {
       throw new NotFoundException(`Building with ID ${id} not found`);
@@ -206,7 +210,6 @@ export class PropertiesService {
    * @returns The newly created Stall entity.
    * @throws NotFoundException if the parent market or tenant is not found.
    */
-  /**
   async createStall(createStallDto: CreateStallDto): Promise<Stall> {
     const market = await this.marketRepository.findOneBy({ id: createStallDto.marketId });
     if (!market) {
@@ -221,15 +224,21 @@ export class PropertiesService {
       }
     }
 
-    const newStall: Stall = this.stallRepository.create({
-      ...createStallDto,
+    const { tenantId, marketId, occupancyStartDate, tenancyExpiryDate, paymentStatus, ...details } = createStallDto;
+
+    const newStall = this.stallRepository.create({
+      ...details,
       market,
-      tenant, // or tenant: tenant || undefined
-      status: tenant ? 'occupied' : 'vacant' as const,
+      tenant,
+      status: tenant ? ShopStatus.OCCUPIED : ShopStatus.VACANT,
+      // Tenancy details only mean something while a tenant occupies the stall
+      occupancyStartDate: tenant ? occupancyStartDate ?? null : null,
+      tenancyExpiryDate: tenant ? tenancyExpiryDate ?? null : null,
+      paymentStatus: tenant ? paymentStatus ?? null : null,
     });
 
     return this.stallRepository.save(newStall);
-}**/
+  }
 
   /**
    * Fetches all Stalls for a specific market.
@@ -269,30 +278,10 @@ export class PropertiesService {
    */
   async updateStall(id: string, updateStallDto: UpdateStallDto): Promise<Stall> {
     const stall = await this.findOneStall(id);
-
-    let tenant: Tenant | undefined = stall.tenant || undefined;
-    if (updateStallDto.tenantId) {
-      const foundTenant = await this.tenantRepository.findOneBy({ id: updateStallDto.tenantId });
-      if (!foundTenant) {
-        throw new NotFoundException(`Tenant with ID ${updateStallDto.tenantId} not found`);
-      }
-      tenant = foundTenant;
-    }
-
-    // Create update object with explicit types
-    const updateData = {
-      ...updateStallDto,
-      tenant,
-      status: tenant ? 'occupied' : 'vacant' as const, // Cast to literal type
-    };
-
-    // Apply updates directly to the existing entity
-    Object.assign(stall, updateData);
-    
-    // Save the updated entity
-    const updatedStall = await this.stallRepository.save(stall);
-    return updatedStall;
-}
+    await this.applyUnitUpdate(stall, updateStallDto);
+    await this.stallRepository.save(stall);
+    return this.findOneStall(id);
+  }
 
   /**
    * Deletes a Stall by its ID.
@@ -327,16 +316,20 @@ export class PropertiesService {
       }
     }
 
+    const { tenantId, buildingId, occupancyStartDate, tenancyExpiryDate, paymentStatus, ...details } = createShopDto;
+
     const newShop = this.shopRepository.create({
-      ...createShopDto,
+      ...details,
       building,
-      tenant: tenant || undefined, // Use undefined instead of null if tenant is null
-      status: tenant ? 'occupied' : 'vacant',
+      tenant,
+      status: tenant ? ShopStatus.OCCUPIED : ShopStatus.VACANT,
+      // Tenancy details only mean something while a tenant occupies the shop
+      occupancyStartDate: tenant ? occupancyStartDate ?? null : null,
+      tenancyExpiryDate: tenant ? tenancyExpiryDate ?? null : null,
+      paymentStatus: tenant ? paymentStatus ?? null : null,
     });
 
-    // Explicitly type the result as Shop
-    const savedShop = await this.shopRepository.save(newShop) as Shop;
-    return savedShop;
+    return this.shopRepository.save(newShop);
     }
 
   /**
@@ -377,23 +370,9 @@ export class PropertiesService {
    */
   async updateShop(id: string, updateShopDto: UpdateShopDto): Promise<Shop> {
     const shop = await this.findOneShop(id);
+    await this.applyUnitUpdate(shop, updateShopDto);
 
-    let tenant: Tenant | null = shop.tenant;
-    if (updateShopDto.tenantId) {
-      tenant = await this.tenantRepository.findOneBy({ id: updateShopDto.tenantId });
-      if (!tenant) {
-        throw new NotFoundException(`Tenant with ID ${updateShopDto.tenantId} not found`);
-      }
-    }
-
-    const updatedShop = {
-      ...shop,
-      ...updateShopDto,
-      tenant,
-      status: tenant ? 'occupied' : 'vacant',
-    };
-
-    await this.shopRepository.save(updatedShop);
+    await this.shopRepository.save(shop);
     return this.findOneShop(id);
   }
 
@@ -408,6 +387,41 @@ export class PropertiesService {
     await this.shopRepository.remove(shop);
   }
 
+  // --- Tenancy rules shared by Shops and Stalls ---
+
+  /**
+   * Applies an update to a shop or a stall. Both follow the same tenancy rules:
+   * only the fields that were sent change, `tenantId: null` vacates the unit and
+   * clears its tenancy, and the status follows from whether there is a tenant.
+   * The caller saves the entity.
+   */
+  private async applyUnitUpdate(unit: Shop | Stall, update: UpdateShopDto | UpdateStallDto): Promise<void> {
+    // `status` is derived below, and a unit does not move to another building or market
+    const { tenantId, status, buildingId, marketId, ...details } = update as UpdateShopDto & UpdateStallDto;
+
+    for (const [field, value] of Object.entries(details)) {
+      if (value !== undefined) {
+        unit[field] = value;
+      }
+    }
+
+    if (tenantId === null) {
+      // Vacating the unit ends the tenancy
+      unit.tenant = null;
+      unit.occupancyStartDate = null;
+      unit.tenancyExpiryDate = null;
+      unit.paymentStatus = null;
+    } else if (tenantId) {
+      const tenant = await this.tenantRepository.findOneBy({ id: tenantId });
+      if (!tenant) {
+        throw new NotFoundException(`Tenant with ID ${tenantId} not found`);
+      }
+      unit.tenant = tenant;
+    }
+
+    unit.status = unit.tenant ? ShopStatus.OCCUPIED : ShopStatus.VACANT;
+  }
+
   // --- Rent Payment Service Methods ---
 
   /**
@@ -417,22 +431,83 @@ export class PropertiesService {
    * @throws NotFoundException if the parent shop or tenant is not found.
    */
   async createRentPayment(createRentPaymentDto: CreateRentPaymentDto): Promise<RentPayment> {
-    const shop = await this.shopRepository.findOneBy({ id: createRentPaymentDto.shopId });
-    if (!shop) {
-      throw new NotFoundException(`Shop with ID ${createRentPaymentDto.shopId} not found`);
+    const { shopId, stallId, tenantId, paymentStatus, amount, paymentDate, year } = createRentPaymentDto;
+
+    if ((shopId && stallId) || (!shopId && !stallId)) {
+      throw new BadRequestException('A payment must be for one shop or one stall');
     }
 
-    const tenant = await this.tenantRepository.findOneBy({ id: createRentPaymentDto.tenantId });
-    if (!tenant) {
-      throw new NotFoundException(`Tenant with ID ${createRentPaymentDto.tenantId} not found`);
+    // Find the unit that was paid for, and the market it is in
+    let shop: Shop | null = null;
+    let stall: Stall | null = null;
+    let market: Market;
+    if (shopId) {
+      shop = await this.shopRepository.findOne({
+        where: { id: shopId },
+        relations: ['tenant', 'building', 'building.market'],
+      });
+      if (!shop) {
+        throw new NotFoundException(`Shop with ID ${shopId} not found`);
+      }
+      market = shop.building.market;
+    } else {
+      stall = await this.stallRepository.findOne({ where: { id: stallId }, relations: ['tenant', 'market'] });
+      if (!stall) {
+        throw new NotFoundException(`Stall with ID ${stallId} not found`);
+      }
+      market = stall.market;
+    }
+    const unit = (shop ?? stall) as Shop | Stall;
+
+    // The payer is the tenant occupying the unit unless another is named
+    let tenant: Tenant | null = unit.tenant;
+    if (tenantId) {
+      tenant = await this.tenantRepository.findOneBy({ id: tenantId });
+      if (!tenant) {
+        throw new NotFoundException(`Tenant with ID ${tenantId} not found`);
+      }
     }
 
     const newPayment = this.rentPaymentRepository.create({
-      ...createRentPaymentDto,
+      amount,
+      paymentDate,
+      year: year ?? paymentDate.getFullYear(),
+      market,
       shop,
+      stall,
       tenant,
     });
-    return this.rentPaymentRepository.save(newPayment);
+    const saved = await this.rentPaymentRepository.save(newPayment);
+
+    // Recording a payment can settle the tenancy in the same step
+    if (paymentStatus) {
+      unit.paymentStatus = paymentStatus;
+      if (shop) {
+        await this.shopRepository.save(shop);
+      } else if (stall) {
+        await this.stallRepository.save(stall);
+      }
+    }
+
+    return this.findOneRentPayment(saved.id);
+  }
+
+  /**
+   * Fetches every payment received for the shops and stalls of a market,
+   * newest first. This is the market's revenue.
+   * @param marketId The ID of the market.
+   * @throws NotFoundException if the market is not found.
+   */
+  async findMarketRentPayments(marketId: string): Promise<RentPayment[]> {
+    const market = await this.marketRepository.findOneBy({ id: marketId });
+    if (!market) {
+      throw new NotFoundException(`Market with ID ${marketId} not found`);
+    }
+    return this.rentPaymentRepository.find({
+      where: { market: { id: marketId } },
+      relations: ['shop', 'stall', 'tenant'],
+      order: { paymentDate: 'DESC', createdAt: 'DESC' },
+    });
   }
 
   /**
@@ -443,20 +518,20 @@ export class PropertiesService {
   async findAllRentPayments(shopId: string): Promise<RentPayment[]> {
     return this.rentPaymentRepository.find({ 
       where: { shop: { id: shopId } },
-      relations: ['shop', 'tenant'] 
+      relations: ['shop', 'stall', 'tenant'] 
     });
   }
 
   /**
    * Fetches a single RentPayment by its ID.
-   * @param id The ID of the payment to fetch.
+   * @param id The ID of the rent payment to fetch.
    * @returns The RentPayment entity.
-   * @throws NotFoundException if the payment is not found.
+   * @throws NotFoundException if the rent payment is not found.
    */
   async findOneRentPayment(id: string): Promise<RentPayment> {
     const payment = await this.rentPaymentRepository.findOne({ 
       where: { id }, 
-      relations: ['shop', 'tenant'] 
+      relations: ['shop', 'stall', 'tenant'] 
     });
     if (!payment) {
       throw new NotFoundException(`Rent Payment with ID ${id} not found`);
@@ -465,23 +540,27 @@ export class PropertiesService {
   }
 
   /**
-   * Updates an existing RentPayment.
-   * @param id The ID of the payment to update.
-   * @param updateRentPaymentDto The DTO containing the update details.
+   * Corrects the amount, date or year of a recorded payment.
+   * @param id The ID of the rent payment to update.
+   * @param updateRentPaymentDto The DTO containing the corrections.
    * @returns The updated RentPayment entity.
-   * @throws NotFoundException if the payment is not found.
+   * @throws NotFoundException if the rent payment is not found.
    */
   async updateRentPayment(id: string, updateRentPaymentDto: UpdateRentPaymentDto): Promise<RentPayment> {
     const payment = await this.findOneRentPayment(id);
-    await this.rentPaymentRepository.update(id, updateRentPaymentDto);
+    for (const [field, value] of Object.entries(updateRentPaymentDto)) {
+      if (value !== undefined) {
+        payment[field] = value;
+      }
+    }
+    await this.rentPaymentRepository.save(payment);
     return this.findOneRentPayment(id);
   }
 
   /**
-   * Deletes a RentPayment by its ID.
-   * @param id The ID of the payment to delete.
-   * @returns A success message.
-   * @throws NotFoundException if the payment is not found.
+   * Deletes a RentPayment by its ID, for example one recorded by mistake.
+   * @param id The ID of the rent payment to delete.
+   * @throws NotFoundException if the rent payment is not found.
    */
   async deleteRentPayment(id: string): Promise<void> {
     const payment = await this.findOneRentPayment(id);

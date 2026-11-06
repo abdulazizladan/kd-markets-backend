@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsEnum, IsOptional, IsString, IsObject, ValidateNested, IsNumber, IsArray } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsOptional, IsString, IsObject, ValidateNested, IsNumber, IsArray, IsDate, Min } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { BuildingStatus, ShopStatus } from '../enums/property-status.enum';
+import { BuildingStatus, PaymentStatus, ShopStatus } from '../enums/property-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAddressDto {
@@ -139,10 +139,10 @@ export class CreateStallDto {
   name: string;
 
   @ApiProperty({
-    description: "Annual rent rate in NGR"
+    description: "Annual rent for the stall, in Naira"
   })
-  @IsNotEmpty()
   @IsNumber()
+  @Min(0)
   annualRentRate: number;
 
   @ApiProperty({
@@ -152,41 +152,58 @@ export class CreateStallDto {
   @IsString()
   marketId: string; // To link to the parent Market
 
-  @ApiProperty({
-    description: "Tenant ID"
-  })
+  @ApiProperty({ required: false, description: 'Size of the stall, for example "2m x 2m"' })
+  @IsOptional()
   @IsString()
-  tenantId?: string; // Optional, as a stall can be vacant
+  size?: string;
+
+  @ApiProperty({ required: false, nullable: true, description: 'Tenant occupying the stall. Leave out for a vacant stall.' })
+  @IsOptional()
+  @IsString()
+  tenantId?: string | null; // Optional, as a stall can be vacant
+
+  // The tenancy fields below follow the same rules as a shop's.
+
+  @ApiProperty({ required: false, nullable: true, type: String, format: 'date', description: 'The day the tenant moved in' })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  occupancyStartDate?: Date | null;
+
+  @ApiProperty({ required: false, nullable: true, type: String, format: 'date', description: 'The day the tenancy ends' })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  tenancyExpiryDate?: Date | null;
+
+  @ApiProperty({ required: false, nullable: true, enum: PaymentStatus, description: 'Whether the rent for the current tenancy has been paid' })
+  @IsOptional()
+  @IsEnum(PaymentStatus)
+  paymentStatus?: PaymentStatus | null;
 }
 
+/**
+ * Every field is optional. Send `tenantId: null` to vacate the stall, which
+ * also clears the tenancy dates and payment status.
+ */
 export class UpdateStallDto extends PartialType(CreateStallDto) {
 
-  @ApiProperty({
-    description: "Status of the stall"
-  })
+  @ApiProperty({ required: false, description: 'Ignored: the status follows from whether the stall has a tenant' })
   @IsOptional()
   @IsEnum(ShopStatus)
   status?: ShopStatus;
-
-  @ApiProperty({
-    description: "Tenant ID"
-  })
-  @IsOptional()
-  @IsString()
-  tenantId?: string;
 }
 
 export class CreateShopDto {
 
-  @ApiProperty({
-  
-  })
+  @ApiProperty({ description: 'Name or number of the shop' })
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @ApiProperty({nullable: true})
-  @IsString()
+  @ApiProperty({ description: 'Annual rent for the shop, in Naira' })
+  @IsNumber()
+  @Min(0)
   annualRentRate: number;
 
   @ApiProperty({})
@@ -194,46 +211,102 @@ export class CreateShopDto {
   @IsString()
   buildingId: string; // To link to the parent Building
 
-  @ApiProperty({nullable: true})
+  @ApiProperty({ required: false, description: 'Size of the shop, for example "3m x 4m"' })
+  @IsOptional()
   @IsString()
-  tenantId?: string; // Optional, as a shop can be vacant
+  size?: string;
+
+  @ApiProperty({ required: false, nullable: true, description: 'Tenant occupying the shop. Leave out for a vacant shop.' })
+  @IsOptional()
+  @IsString()
+  tenantId?: string | null; // Optional, as a shop can be vacant
+
+  @ApiProperty({ required: false, nullable: true, type: String, format: 'date', description: 'The day the tenant moved in' })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  occupancyStartDate?: Date | null;
+
+  @ApiProperty({ required: false, nullable: true, type: String, format: 'date', description: 'The day the tenancy ends' })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  tenancyExpiryDate?: Date | null;
+
+  @ApiProperty({ required: false, nullable: true, enum: PaymentStatus, description: 'Whether the rent for the current tenancy has been paid' })
+  @IsOptional()
+  @IsEnum(PaymentStatus)
+  paymentStatus?: PaymentStatus | null;
 }
 
+/**
+ * Every field is optional. Send `tenantId: null` to vacate the shop, which
+ * also clears the tenancy dates and payment status.
+ */
 export class UpdateShopDto extends PartialType(CreateShopDto) {
 
-  @ApiProperty({})
+  @ApiProperty({ required: false, description: 'Ignored: the status follows from whether the shop has a tenant' })
   @IsOptional()
   @IsEnum(ShopStatus)
   status?: ShopStatus;
-
-  @ApiProperty({})
-  @IsOptional()
-  @IsString()
-  tenantId?: string;
 }
 
 
 export class CreateRentPaymentDto {
 
-  @ApiProperty({})
-  @IsNotEmpty()
+  @ApiProperty({ description: 'Amount received, in Naira' })
   @IsNumber()
+  @Min(0.01)
   amount: number;
 
-  @ApiProperty({})
-  @IsNotEmpty()
+  @ApiProperty({ type: String, format: 'date', description: 'The day the money was received' })
+  @Type(() => Date)
+  @IsDate()
+  paymentDate: Date;
+
+  @ApiProperty({ required: false, description: 'The shop the payment is for. Send this or stallId, not both.' })
+  @IsOptional()
+  @IsString()
+  shopId?: string;
+
+  @ApiProperty({ required: false, description: 'The stall the payment is for. Send this or shopId, not both.' })
+  @IsOptional()
+  @IsString()
+  stallId?: string;
+
+  @ApiProperty({ required: false, description: 'The tenant who paid. Defaults to the tenant occupying the unit.' })
+  @IsOptional()
+  @IsString()
+  tenantId?: string;
+
+  @ApiProperty({ required: false, description: 'The rent year the payment is for. Defaults to the year of the payment date.' })
+  @IsOptional()
   @IsNumber()
-  year: number;
+  year?: number;
 
-  @ApiProperty({})
-  @IsNotEmpty()
-  @IsString()
-  shopId: string; // To link to the parent Shop
-
-  @ApiProperty({})
-  @IsNotEmpty()
-  @IsString()
-  tenantId: string; // To link to the Tenant
+  @ApiProperty({ required: false, enum: PaymentStatus, description: "If sent, the unit's tenancy payment status is set to this at the same time" })
+  @IsOptional()
+  @IsEnum(PaymentStatus)
+  paymentStatus?: PaymentStatus;
 }
 
-export class UpdateRentPaymentDto extends PartialType(CreateRentPaymentDto) {}
+/** Only the amount, date and year of a recorded payment can be corrected. */
+export class UpdateRentPaymentDto {
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0.01)
+  amount?: number;
+
+  @ApiProperty({ required: false, type: String, format: 'date' })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  paymentDate?: Date;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  year?: number;
+}

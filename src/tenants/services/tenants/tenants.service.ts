@@ -92,6 +92,32 @@ export class TenantsService {
    * @param updateTenantDto The data transfer object with updated tenant data.
    * @returns The updated tenant object.
    */
+  /**
+   * Fetches a tenant together with the shops and stalls they occupy, where
+   * each one is, and every rent payment they have made.
+   */
+  async getDetails(id: string): Promise<Tenant> {
+    let tenant: Tenant | null;
+    try {
+      tenant = await this.tenantRepository.findOne({
+        where: { id },
+        relations: [
+          'shops', 'shops.building', 'shops.building.market',
+          'stalls', 'stalls.market',
+          // Payment history, with what each payment was for
+          'rentPayments', 'rentPayments.shop', 'rentPayments.stall', 'rentPayments.market',
+        ],
+      });
+    } catch (error) {
+      throw new BadRequestException('Invalid tenant ID or a server error occurred.');
+    }
+    if (!tenant) {
+      throw new NotFoundException(`Tenant with ID ${id} not found.`);
+    }
+    return tenant;
+  }
+
+
   async update(id: string, updateTenantDto: UpdateTenantDto): Promise<Tenant> {
     try {
       const tenant = await this.getByID(id); // Reuses the getByID method to check for existence

@@ -134,7 +134,7 @@ export class TenantsController {
         description: 'Internal server error - Failed to fetch tenant'
     })
     async getByID(@Param('id') id: string): Promise<Tenant> {
-        return this.tenantsService.getByID(id);
+        return this.tenantsService.getDetails(id);
     }
 
     @Put(':id')

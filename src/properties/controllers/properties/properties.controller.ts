@@ -331,6 +331,34 @@ export class PropertiesController {
   }
 
   // --- Stall Endpoints ---
+
+  @ApiTags('Properties', 'Stalls')
+  @ApiOperation({
+    summary: 'Create a new stall',
+    description: 'Creates a stall in a market. A stall is a standalone unit that is not inside a building. It can be created vacant or with a tenant and tenancy details.'
+  })
+  @ApiBody({
+    type: CreateStallDto,
+    description: 'Stall creation data'
+  })
+  @ApiCreatedResponse({
+    description: 'Stall successfully created',
+    type: Stall
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request - Invalid input data or missing required fields'
+  })
+  @ApiNotFoundResponse({
+    description: 'Parent market or tenant not found'
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Internal server error - Failed to create stall'
+  })
+  @Post('stalls')
+  @HttpCode(HttpStatus.CREATED)
+  async createStall(@Body() createStallDto: CreateStallDto): Promise<Stall> {
+    return this.propertiesService.createStall(createStallDto);
+  }
   
   @ApiTags('Properties', 'Stalls')
   @ApiOperation({ 
@@ -587,6 +615,48 @@ export class PropertiesController {
   @HttpCode(HttpStatus.CREATED)
   async createRentPayment(@Body() createRentPaymentDto: CreateRentPaymentDto): Promise<RentPayment> {
     return this.propertiesService.createRentPayment(createRentPaymentDto);
+  }
+
+  @ApiTags('Properties', 'Rent Payments')
+  @ApiOperation({
+    summary: 'List the rent payments of a market',
+    description: 'Returns every payment received for the shops and stalls of a market, newest first. Summed by date, this is the market\'s revenue.'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Unique identifier of the market'
+  })
+  @ApiOkResponse({
+    description: 'Payments retrieved successfully',
+    type: [RentPayment]
+  })
+  @ApiNotFoundResponse({
+    description: 'Market not found with the specified ID'
+  })
+  @Get('markets/:id/rent-payments')
+  async findMarketRentPayments(@Param('id') id: string): Promise<RentPayment[]> {
+    return this.propertiesService.findMarketRentPayments(id);
+  }
+
+  @ApiTags('Properties', 'Rent Payments')
+  @ApiOperation({
+    summary: 'Delete a rent payment',
+    description: 'Removes a recorded payment, for example one entered by mistake.'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Unique identifier of the rent payment'
+  })
+  @ApiNoContentResponse({
+    description: 'Payment deleted'
+  })
+  @ApiNotFoundResponse({
+    description: 'Rent payment not found with the specified ID'
+  })
+  @Delete('rent-payments/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteRentPayment(@Param('id') id: string): Promise<void> {
+    return this.propertiesService.deleteRentPayment(id);
   }
 
   //@ApiTags('Rent Payments')
